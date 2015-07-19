@@ -13,6 +13,17 @@ class ScraperMain < Logging
   MLA_URL = "http://#{CSV_HOST}#{MLA_PATH}"
   MLC_URL = "http://#{CSV_HOST}#{MLC_PATH}"
 
+  def main
+    mla = scrape(MLA_URL)
+    mlc = scrape(MLC_URL)
+
+    mla.merge!(mlc).each do |key, record|
+      @logger.info("### Saving #{record['first_name']} #{record['surname']}")
+      puts("### Saving #{record['first_name']} #{record['surname']}")
+      ScraperWiki::save(['surname', 'electorate'], record)
+    end
+  end
+
   def scrape(url)
     records = {}
     csv = CSV.read(open(url), :headers => :true)
@@ -68,14 +79,4 @@ private
     address.strip
   end
 
-  def main
-    mla = scrape(MLA_URL)
-    mlc = scrape(MLC_URL)
-
-    csv_records.each do |key, record|
-      @logger.info("### Saving #{record['first_name']} #{record['surname']}")
-      puts("### Saving #{record['first_name']} #{record['surname']}")
-      ScraperWiki::save(['surname', 'electorate'], record)
-    end
-  end
 end
