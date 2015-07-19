@@ -78,5 +78,4 @@ private
     address += ' ' + row['CONTACT ADDRESS LINE3'] if row['CONTACT ADDRESS LINE3']
     address.strip
   end
-
 end
