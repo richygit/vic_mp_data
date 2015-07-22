@@ -1,5 +1,4 @@
 require 'fileutils'
-require_relative 'csv_scraper'
 require './logging'
 require 'scraperwiki'
 require 'csv'
@@ -27,9 +26,8 @@ class ScraperMain < Logging
   def scrape(url)
     records = {}
     csv = CSV.read(open(url), :headers => :true)
-    headers = csv.headers
     csv.each do |line|
-      key, record = parse_record(line, headers)
+      key, record = parse_record(line)
       records[key] = record
     end
     records
@@ -51,7 +49,7 @@ private
     address.scan(/(.*),\s*(.+),\s*(.+)$/).flatten
   end
 
-  def parse_record(row, headers)
+  def parse_record(row)
     first_name, surname = parse_name(row['Name'])
     record = {}
     record['type'] = row['House'] == 'MLA' ? 'mp' : 'senator'
